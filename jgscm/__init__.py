@@ -490,14 +490,14 @@ class GoogleStorageContentManager(ContentsManager):
         """
         Get the bucket by it's name. Uses cache by default.
         :param name: bucket name.
-        :param throw: If True raises NotFound exception, otherwise, returns
+        :param throw: If True raises NotFound or Forbidden exception, otherwise, returns
                       None.
         :return: instance of :class:`google.cloud.storage.Bucket` or None.
         """
         if not self.cache_buckets:
             try:
                 return self.client.get_bucket(name)
-            except NotFound:
+            except (NotFound, Forbidden):
                 if throw:
                     raise
                 return None
@@ -515,7 +515,7 @@ class GoogleStorageContentManager(ContentsManager):
                     return self._get_bucket(name, throw)
                 else:
                     raise
-            except (BadRequest, NotFound):
+            except (BadRequest, NotFound, Forbidden):
                 if throw:
                     raise
                 return None
